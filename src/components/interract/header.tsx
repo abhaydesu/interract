@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { GeistPixelSquare } from "geist/font/pixel";
 
 const navigation = [
   { name: "Components", href: "/components" },
@@ -23,7 +24,7 @@ export function Header() {
       <nav className="mx-auto max-w-7xl px-6 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-serif text-2xl font-semibold tracking-tight">
+            <span className={`${GeistPixelSquare.className} text-2xl font-semibold tracking-tight`}>
               Interract
             </span>
           </Link>

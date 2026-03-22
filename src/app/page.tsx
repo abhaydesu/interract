@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { componentsRegistry } from "@/lib/registry";
 import { ArrowRight, Sparkles, Layers, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import { GeistPixelSquare } from "geist/font/pixel";
 
 export default function Home() {
   const featuredComponents = componentsRegistry.slice(0, 4);
@@ -17,50 +19,71 @@ export default function Home() {
       <Header />
       
       <main className="pt-20">
-        <section className="relative py-32 grid-bg-subtle">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/50 to-white dark:from-neutral-950/0 dark:via-neutral-950/50 dark:to-neutral-950" />
+        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+          {/* Hero Background */}
+          <div className="absolute inset-0 z-0">
+            <Image 
+              src="/bg.jpg" 
+              alt="Interract Hero Background" 
+              fill 
+              className="object-cover"
+              priority
+            />
+            {/* Gradient Overlay for Depth and Contrast */}
+            <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-white dark:to-neutral-950 transition-colors duration-500" />
+          </div>
           
-          <div className="relative mx-auto max-w-7xl px-6">
-            <div className="text-center space-y-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-4"
-              >
-                <Badge variant="outline" className="mb-4 border-neutral-300 dark:border-neutral-700">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  v1.0 Released
-                </Badge>
-                <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tight text-neutral-900 dark:text-neutral-100">
+          <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="space-y-10"
+            >
+              <div className="space-y-6">
+                
+                <h1 className={`${GeistPixelSquare.className} text-7xl md:text-9xl font-light tracking-tight text-white drop-shadow-2xl`}>
                   Interract
                 </h1>
-                <p className="text-xl text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-                  A modern component library focused on interactive UI, 
-                  micro-interactions, and motion-enhanced design.
+                
+                <p className="text-xl md:text-2xl text-neutral-200 max-w-2xl mx-auto leading-relaxed font-light drop-shadow-md">
+                  Crafting modern component libraries focused on 
+                  micro-interactions and motion-enhanced design.
                 </p>
-              </motion.div>
+              </div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center"
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="flex flex-col sm:flex-row gap-6 justify-center"
               >
-                <Button size="lg" className="bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200" asChild>
+                <Button 
+                  size="lg" 
+                  className="bg-white text-neutral-900 hover:bg-neutral-100 dark:bg-neutral-100 dark:hover:bg-white text-lg px-8 h-14 rounded-full transition-all duration-300 hover:scale-105 shadow-xl" 
+                  asChild
+                >
                   <Link href="/components">
-                    Explore Components
-                    <ArrowRight className="ml-2 w-4 h-4" />
+                    Get Started
+                    <ArrowRight className="ml-2 w-5 h-5" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-neutral-300 dark:border-neutral-700" asChild>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="backdrop-blur-md bg-white/5 border-white/20 text-white hover:bg-white/10 dark:hover:bg-white/10 text-lg px-8 h-14 rounded-full transition-all duration-300" 
+                  asChild
+                >
                   <Link href="/docs">
-                    Read Docs
+                    View Docs
                   </Link>
                 </Button>
               </motion.div>
-            </div>
+            </motion.div>
           </div>
+          
+          {/* Subtle bottom fade to content area */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-white dark:from-neutral-950 to-transparent pointer-events-none" />
         </section>
 
         <section className="py-24 border-t border-neutral-200 dark:border-neutral-800">
@@ -96,7 +119,7 @@ export default function Home() {
         <section className="py-24 border-t border-neutral-200 dark:border-neutral-800">
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex items-center justify-between mb-12">
-              <h2 className="font-serif text-4xl font-light text-neutral-900 dark:text-neutral-100">Featured Components</h2>
+              <h2 className={`${GeistPixelSquare.className} text-4xl font-light text-neutral-900 dark:text-neutral-100`}>Featured Components</h2>
               <Button variant="ghost" asChild>
                 <Link href="/components">
                   View All
@@ -140,7 +163,7 @@ export default function Home() {
         <section className="py-24 border-t border-neutral-200 dark:border-neutral-800">
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center space-y-4 mb-12">
-              <h2 className="font-serif text-4xl font-light text-neutral-900 dark:text-neutral-100">Get Started</h2>
+              <h2 className={`${GeistPixelSquare.className} text-4xl font-light text-neutral-900 dark:text-neutral-100`}>Get Started</h2>
               <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
                 Install the components you need and start building beautiful interfaces.
               </p>
@@ -168,7 +191,7 @@ export default function Home() {
       <footer className="border-t border-neutral-200 dark:border-neutral-800 py-12">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="font-serif text-xl text-neutral-900 dark:text-neutral-100">Interract</div>
+            <div className={`${GeistPixelSquare.className} text-xl text-neutral-900 dark:text-neutral-100`}>Interract</div>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
               Built with Next.js, Tailwind CSS, and Framer Motion
             </p>

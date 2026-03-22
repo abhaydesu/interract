@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { GeistPixelSquare } from "geist/font/pixel";
 import "./globals.css";
 
 const serif = Cormorant_Garamond({
@@ -29,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${sans.variable} ${serif.variable} font-sans antialiased min-h-screen`}
+        className={`${GeistPixelSquare.variable} ${sans.variable} ${serif.variable} font-sans antialiased min-h-screen`}
       >
         <ThemeProvider
           attribute="class"
