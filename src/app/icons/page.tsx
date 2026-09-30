@@ -1,146 +1,112 @@
 "use client";
 
 import { useState } from "react";
-import { Header } from "@/components/interract/header";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { iconCategories } from "@/lib/icon-registry";
-import { motion } from "framer-motion";
-import { AnimatedIcon } from "@/components/interract/animated-icon";
-import { 
+import { AnimatePresence, motion } from "motion/react";
+import {
   ArrowRight, ArrowLeft, ArrowUp, ArrowDown, ChevronRight, ChevronDown,
   Home, Menu, Settings, Search, Heart, Star, Mail, Bell,
   Download, Upload, Copy, Edit, Trash, Eye, Play, Pause,
-  Image, File, Folder, Plus, Minus, Check as CheckIcon, X, Zap, Sparkles, Box
+  Image, File, Folder, Plus, Minus, Check, X, Zap, Sparkles, Box,
+  type LucideIcon,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PageShell } from "@/components/interract/page-shell";
+import { Eyebrow, Section } from "@/components/interract/frame";
+import { AnimatedIcon } from "@/components/interract/animated-icon";
+import { animatedIcons, iconCategories } from "@/lib/icon-registry";
 
-const iconsList = [
-  { name: "ArrowRight", icon: ArrowRight },
-  { name: "ArrowLeft", icon: ArrowLeft },
-  { name: "ArrowUp", icon: ArrowUp },
-  { name: "ArrowDown", icon: ArrowDown },
-  { name: "ChevronRight", icon: ChevronRight },
-  { name: "ChevronDown", icon: ChevronDown },
-  { name: "Home", icon: Home },
-  { name: "Menu", icon: Menu },
-  { name: "Settings", icon: Settings },
-  { name: "Search", icon: Search },
-  { name: "Heart", icon: Heart },
-  { name: "Star", icon: Star },
-  { name: "Mail", icon: Mail },
-  { name: "Bell", icon: Bell },
-  { name: "Download", icon: Download },
-  { name: "Upload", icon: Upload },
-  { name: "Copy", icon: Copy },
-  { name: "Edit", icon: Edit },
-  { name: "Trash", icon: Trash },
-  { name: "Eye", icon: Eye },
-  { name: "Play", icon: Play },
-  { name: "Pause", icon: Pause },
-  { name: "Image", icon: Image },
-  { name: "File", icon: File },
-  { name: "Folder", icon: Folder },
-  { name: "Plus", icon: Plus },
-  { name: "Minus", icon: Minus },
-  { name: "Check", icon: CheckIcon },
-  { name: "X", icon: X },
-  { name: "Zap", icon: Zap },
-  { name: "Sparkles", icon: Sparkles },
-  { name: "Box", icon: Box },
-];
+const iconMap: Record<string, LucideIcon> = {
+  ArrowRight, ArrowLeft, ArrowUp, ArrowDown, ChevronRight, ChevronDown,
+  Home, Menu, Settings, Search, Heart, Star, Mail, Bell,
+  Download, Upload, Copy, Edit, Trash, Eye, Play, Pause,
+  Image, File, Folder, Plus, Minus, Check, X, Zap, Sparkles, Box,
+};
 
 export default function IconsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
+  const icons = animatedIcons.filter(
+    (i) => selectedCategory === "All" || i.category === selectedCategory
+  );
+
   const copyToClipboard = (iconName: string) => {
     navigator.clipboard.writeText(`import { ${iconName} } from "lucide-react"`);
     setCopiedIcon(iconName);
-    setTimeout(() => setCopiedIcon(null), 2000);
+    setTimeout(() => setCopiedIcon(null), 1600);
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
-      <Header />
-      
-      <main className="pt-32 pb-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="space-y-8 mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="font-serif text-5xl font-light mb-4 text-neutral-900 dark:text-neutral-100">Icons</h1>
-              <p className="text-neutral-500 dark:text-neutral-400 text-lg max-w-2xl">
-                A collection of animated icons built with Lucide and Framer Motion.
-              </p>
-            </motion.div>
-
-            <div className="flex flex-wrap gap-2">
-              {iconCategories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                  className="rounded-full"
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-            {iconsList.map((item, i) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: i * 0.02 }}
-              >
-                <Card
-                  className="cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-600 transition-all group relative bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800"
-                  onClick={() => copyToClipboard(item.name)}
-                  onMouseEnter={() => setHoveredIcon(item.name)}
-                  onMouseLeave={() => setHoveredIcon(null)}
-                >
-                  <CardContent className="p-4 flex items-center justify-center">
-                    <div className="w-10 h-10 flex items-center justify-center">
-                      <AnimatedIcon
-                        icon={item.icon}
-                        preset={hoveredIcon === item.name ? "bounce" : "none"}
-                        className="text-neutral-700 dark:text-neutral-300"
-                      />
-                    </div>
-                  </CardContent>
-                  
-                  {copiedIcon === item.name && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="absolute inset-0 flex items-center justify-center bg-white/90 dark:bg-neutral-900/90 rounded-md"
-                    >
-                      <CheckIcon className="w-5 h-5 text-green-500" />
-                    </motion.div>
-                  )}
-                </Card>
-                <p className="text-xs text-center mt-2 text-neutral-500 dark:text-neutral-400 truncate">
-                  {item.name}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-neutral-500 dark:text-neutral-400 text-sm">
-              Click any icon to copy its import to clipboard
-            </p>
-          </div>
+    <PageShell>
+      <Section marks={false} bleed={false}>
+        <div className="px-6 pt-16 pb-10 md:px-10">
+          <Eyebrow>{animatedIcons.length} icons</Eyebrow>
+          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-foreground md:text-5xl">Icons</h1>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+            Lucide icons with motion on hover. Click any icon to copy its import.
+          </p>
         </div>
-      </main>
-    </div>
+      </Section>
+
+      <Section>
+        <div className="-mx-1 flex gap-0.5 overflow-x-auto px-7 py-4 md:px-11">
+          {iconCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={cn(
+                "relative h-8 shrink-0 rounded-lg px-3 text-[13px] font-medium transition-colors",
+                selectedCategory === cat ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {selectedCategory === cat && (
+                <motion.span
+                  layoutId="icon-cat"
+                  className="absolute inset-0 rounded-lg bg-surface shadow-btn"
+                  transition={{ type: "spring", stiffness: 500, damping: 38 }}
+                />
+              )}
+              <span className="relative">{cat}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-3 gap-px border-t border-line bg-line sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+          {icons.map((item) => {
+            const Icon = iconMap[item.name];
+            if (!Icon) return null;
+            return (
+              <button
+                key={item.name}
+                onClick={() => copyToClipboard(item.name)}
+                onMouseEnter={() => setHoveredIcon(item.name)}
+                onMouseLeave={() => setHoveredIcon(null)}
+                className="group relative flex aspect-square flex-col items-center justify-center gap-3 bg-background transition-colors hover:bg-surface"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl text-neutral-600 transition-shadow group-hover:bg-surface group-hover:shadow-btn dark:text-neutral-300">
+                  <AnimatedIcon icon={Icon} preset={hoveredIcon === item.name ? "bounce" : "none"} size={18} />
+                </span>
+                <span className="max-w-full truncate px-2 font-mono text-[10px] text-muted-foreground">
+                  {item.name}
+                </span>
+                <AnimatePresence>
+                  {copiedIcon === item.name && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute top-2 right-2 flex items-center gap-1 rounded-md bg-neutral-900 px-1.5 py-0.5 text-[10px] text-white dark:bg-white dark:text-neutral-900"
+                    >
+                      <Check className="h-2.5 w-2.5" /> Copied
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
+            );
+          })}
+        </div>
+      </Section>
+    </PageShell>
   );
 }

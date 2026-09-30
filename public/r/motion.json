@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "motion",
+  "type": "registry:lib",
+  "dependencies": [
+    "motion"
+  ],
+  "files": [
+    {
+      "path": "lib/motion.ts",
+      "content": "import { type HTMLMotionProps, type Variants } from \"motion/react\";\n\nexport const motionVariants = {\n  fadeIn: {\n    initial: { opacity: 0 },\n    animate: { opacity: 1 },\n    exit: { opacity: 0 },\n  } as Variants,\n\n  fadeInUp: {\n    initial: { opacity: 0, y: 10 },\n    animate: { opacity: 1, y: 0 },\n    exit: { opacity: 0, y: -10 },\n  } as Variants,\n\n  fadeInDown: {\n    initial: { opacity: 0, y: -10 },\n    animate: { opacity: 1, y: 0 },\n    exit: { opacity: 0, y: 10 },\n  } as Variants,\n\n  scaleIn: {\n    initial: { opacity: 0, scale: 0.95 },\n    animate: { opacity: 1, scale: 1 },\n    exit: { opacity: 0, scale: 0.95 },\n  } as Variants,\n\n  slideInRight: {\n    initial: { opacity: 0, x: 20 },\n    animate: { opacity: 1, x: 0 },\n    exit: { opacity: 0, x: -20 },\n  } as Variants,\n\n  staggerContainer: {\n    animate: {\n      transition: {\n        staggerChildren: 0.05,\n      },\n    },\n  } as Variants,\n};\n\nexport const transitionPresets = {\n  fast: {\n    duration: 0.15,\n    ease: \"easeOut\",\n  },\n  normal: {\n    duration: 0.25,\n    ease: \"easeOut\",\n  },\n  slow: {\n    duration: 0.4,\n    ease: \"easeOut\",\n  },\n  spring: {\n    type: \"spring\",\n    stiffness: 400,\n    damping: 30,\n  },\n  springBounce: {\n    type: \"spring\",\n    stiffness: 500,\n    damping: 15,\n  },\n};\n\nexport const hoverVariants = {\n  scale: {\n    scale: 1.02,\n    transition: transitionPresets.fast,\n  },\n  lift: {\n    y: -2,\n    transition: transitionPresets.fast,\n  },\n  glow: {\n    boxShadow: \"0 0 20px rgba(0, 0, 0, 0.1)\",\n    transition: transitionPresets.normal,\n  },\n};\n\nexport const pressVariants = {\n  scale: {\n    scale: 0.98,\n    transition: { duration: 0.1 },\n  },\n};\n\nexport type MotionConfig = {\n  variants?: Variants;\n  transition?: typeof transitionPresets.normal;\n};\n",
+      "type": "registry:lib",
+      "target": "lib/motion.ts"
+    }
+  ]
+}

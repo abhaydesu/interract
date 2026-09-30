@@ -1,129 +1,73 @@
-"use client";
-
-import Link from "next/link";
-import { Header } from "@/components/interract/header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Accessibility, Github, Sparkles, SwatchBook, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Github, Twitter, Heart } from "lucide-react";
+import { PageShell } from "@/components/interract/page-shell";
+import { Eyebrow, Section } from "@/components/interract/frame";
+
+const pillars = [
+  { icon: Accessibility, title: "Accessible", body: "Built on Radix UI primitives for full accessibility support out of the box." },
+  { icon: Sparkles, title: "Animated", body: "Micro-interactions powered by Motion — short, interruptible, purposeful." },
+  { icon: SwatchBook, title: "Customizable", body: "Tailwind tokens for shadows, lines and surfaces make theming trivial." },
+];
+
+const stack = ["Next.js", "TypeScript", "Tailwind CSS", "Motion", "Radix UI", "Lucide"];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
-      <Header />
-      
-      <main className="pt-32 pb-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-8 mb-12"
-          >
-            <h1 className="font-serif text-5xl font-light mb-4 text-neutral-900 dark:text-neutral-100">About Interract</h1>
-            <p className="text-neutral-500 dark:text-neutral-400 text-lg max-w-2xl">
-              Interract is a modern component library focused on interactive UI, micro-interactions, 
-              and motion-enhanced design. Built with accessibility and developer experience in mind.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              <Card className="p-6 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-                <CardHeader>
-                  <CardTitle className="text-lg text-neutral-900 dark:text-neutral-100">Accessible</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-neutral-500 dark:text-neutral-400">
-                    Built on Radix UI primitives for full accessibility support out of the box.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <Card className="p-6 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-                <CardHeader>
-                  <CardTitle className="text-lg text-neutral-900 dark:text-neutral-100">Animated</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-neutral-500 dark:text-neutral-400">
-                    Smooth micro-interactions powered by Framer Motion for delightful experiences.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-            >
-              <Card className="p-6 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-                <CardHeader>
-                  <CardTitle className="text-lg text-neutral-900 dark:text-neutral-100">Customizable</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-neutral-500 dark:text-neutral-400">
-                    Built on Tailwind CSS for easy theming and customization to match your brand.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
-          >
-            <Card className="p-8 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-              <CardContent className="space-y-6">
-                <h2 className="font-serif text-2xl text-neutral-900 dark:text-neutral-100">Tech Stack</h2>
-                <div className="flex flex-wrap gap-2">
-                  {["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Radix UI", "Lucide"].map((tech) => (
-                    <Badge key={tech} variant="outline" className="border-neutral-300 dark:border-neutral-700">{tech}</Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
-            className="mt-12 text-center"
-          >
-            <p className="text-neutral-500 dark:text-neutral-400 mb-4">
-              Built with <Heart className="w-4 h-4 inline mx-1 text-red-500" /> for the community
-            </p>
-            <div className="flex justify-center gap-4">
-              <Button variant="outline" className="border-neutral-300 dark:border-neutral-700" asChild>
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-                  <Github className="w-4 h-4 mr-2" />
-                  GitHub
-                </a>
-              </Button>
-              <Button variant="outline" className="border-neutral-300 dark:border-neutral-700" asChild>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                  <Twitter className="w-4 h-4 mr-2" />
-                  Twitter
-                </a>
-              </Button>
-            </div>
-          </motion.div>
+    <PageShell>
+      <Section marks={false} bleed={false}>
+        <div className="px-6 pt-16 pb-12 md:px-10">
+          <Eyebrow>About</Eyebrow>
+          <h1 className="mt-4 max-w-2xl text-4xl font-semibold tracking-[-0.04em] text-balance text-foreground md:text-5xl">
+            Interfaces should feel{" "}
+            <span className="text-neutral-400 dark:text-neutral-500">as good as they look.</span>
+          </h1>
+          <p className="mt-5 max-w-lg text-sm leading-relaxed text-muted-foreground">
+            Interract is a component library focused on interactive UI, micro-interactions and
+            motion-enhanced design — built with accessibility and developer experience in mind.
+          </p>
         </div>
-      </main>
-    </div>
+      </Section>
+
+      <Section>
+        <div className="grid grid-cols-1 gap-px bg-line md:grid-cols-3">
+          {pillars.map(({ icon: Icon, title, body }) => (
+            <div key={title} className="bg-background p-6 md:p-8">
+              <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-surface text-muted-foreground shadow-btn">
+                <Icon className="h-4 w-4" />
+              </span>
+              <h3 className="mt-6 text-sm font-medium text-foreground">{title}</h3>
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{body}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section>
+        <div className="flex flex-col gap-6 px-6 py-12 md:flex-row md:items-center md:justify-between md:px-10">
+          <div>
+            <Eyebrow>Built with</Eyebrow>
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {stack.map((tech) => (
+                <span key={tech} className="rounded-lg bg-surface px-2.5 py-1 text-xs text-foreground shadow-btn">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+                <Github /> GitHub
+              </a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                <Twitter /> Twitter
+              </a>
+            </Button>
+          </div>
+        </div>
+      </Section>
+    </PageShell>
   );
 }

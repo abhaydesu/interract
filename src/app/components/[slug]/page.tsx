@@ -1,304 +1,244 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Header } from "@/components/interract/header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { componentsRegistry } from "@/lib/registry";
-import { motion } from "framer-motion";
-import { ArrowLeft, Copy, Check, ChevronRight } from "lucide-react";
+import { motion } from "motion/react";
+import { ArrowLeft, ArrowRight, Check, ChevronRight, Copy, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PageShell } from "@/components/interract/page-shell";
+import { Eyebrow, Section } from "@/components/interract/frame";
+import { Preview } from "@/components/interract/previews";
+import { componentsRegistry, getInstallCommand } from "@/lib/registry";
 
-const componentExamples: Record<string, React.ReactNode> = {
-  button: (
-    <div className="flex flex-wrap gap-4">
-      <Button>Default</Button>
-      <Button variant="destructive">Destructive</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="ghost">Ghost</Button>
-      <Button variant="link">Link</Button>
-    </div>
-  ),
-  card: (
-    <Card className="w-[350px] bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-      <CardHeader>
-        <CardTitle className="text-neutral-900 dark:text-neutral-100">Card Title</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          This is a card component with a title and description. It can contain any content.
-        </p>
-      </CardContent>
-    </Card>
-  ),
-  accordion: (
-    <div className="w-[350px]">
-      <AccordionDemo />
-    </div>
-  ),
-  badge: (
-    <div className="flex flex-wrap gap-2">
-      <Badge>Default</Badge>
-      <Badge variant="secondary">Secondary</Badge>
-      <Badge variant="destructive">Destructive</Badge>
-      <Badge variant="outline">Outline</Badge>
-    </div>
-  ),
-  popover: (
-    <PopoverDemo />
-  ),
-  tooltip: (
-    <TooltipDemo />
-  ),
-  hovercard: (
-    <HoverCardDemo />
-  ),
-  iconbutton: (
-    <div className="flex gap-2">
-      <IconButtonDemo />
-    </div>
-  ),
-};
-
-function AccordionDemo() {
-  const { Accordion, AccordionItem, AccordionTrigger, AccordionContent } = require("@/components/ui/accordion");
+function CopyButton({ text, className }: { text: string; className?: string }) {
+  const [copied, setCopied] = useState(false);
   return (
-    <Accordion type="single" collapsible className="w-full">
-      <AccordionItem value="item-1" className="border-neutral-200 dark:border-neutral-800">
-        <AccordionTrigger className="text-neutral-900 dark:text-neutral-100">What is Interract?</AccordionTrigger>
-        <AccordionContent className="text-neutral-500 dark:text-neutral-400">
-          Interract is a modern component library focused on interactive UI, micro-interactions, and motion-enhanced design.
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-2" className="border-neutral-200 dark:border-neutral-800">
-        <AccordionTrigger className="text-neutral-900 dark:text-neutral-100">How do I install?</AccordionTrigger>
-        <AccordionContent className="text-neutral-500 dark:text-neutral-400">
-          Use the shadcn CLI to add components to your project.
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-3" className="border-neutral-200 dark:border-neutral-800">
-        <AccordionTrigger className="text-neutral-900 dark:text-neutral-100">Is it accessible?</AccordionTrigger>
-        <AccordionContent className="text-neutral-500 dark:text-neutral-400">
-          Yes, all components are built with accessibility in mind using Radix UI primitives.
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1600);
+      }}
+      aria-label="Copy"
+      className={cn(
+        "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-surface hover:text-foreground hover:shadow-btn",
+        className
+      )}
+    >
+      {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+    </button>
   );
 }
 
-function PopoverDemo() {
-  const { Popover, PopoverTrigger, PopoverContent } = require("@/components/ui/popover");
+function Segmented<T extends string>({
+  id,
+  value,
+  options,
+  onChange,
+}: {
+  id: string;
+  value: T;
+  options: readonly T[];
+  onChange: (v: T) => void;
+}) {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="border-neutral-300 dark:border-neutral-700">Open Popover</Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-        <div className="space-y-2">
-          <h4 className="font-medium text-neutral-900 dark:text-neutral-100">Popover Title</h4>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            This is a popover component that appears near the trigger element.
-          </p>
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-function TooltipDemo() {
-  const { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } = require("@/components/ui/tooltip");
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="outline" className="border-neutral-300 dark:border-neutral-700">Hover me</Button>
-        </TooltipTrigger>
-        <TooltipContent className="bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900">
-          <p>This is a tooltip</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
-
-function HoverCardDemo() {
-  const { HoverCard, HoverCardTrigger, HoverCardContent } = require("@/components/ui/hover-card");
-  return (
-    <HoverCard>
-      <HoverCardTrigger asChild>
-        <Button variant="link" className="text-neutral-900 dark:text-neutral-100">@interract</Button>
-      </HoverCardTrigger>
-      <HoverCardContent className="w-80 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-        <div className="space-y-2">
-          <h4 className="font-medium text-neutral-900 dark:text-neutral-100">@interract</h4>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            A modern component library for building beautiful interfaces.
-          </p>
-        </div>
-      </HoverCardContent>
-    </HoverCard>
-  );
-}
-
-function IconButtonDemo() {
-  const { IconButton } = require("@/components/ui/icon-button");
-  const { Home, Settings, Bell, Heart } = require("lucide-react");
-  return (
-    <>
-      <IconButton><Home /></IconButton>
-      <IconButton variant="secondary"><Settings /></IconButton>
-      <IconButton variant="outline"><Bell /></IconButton>
-      <IconButton variant="ghost"><Heart /></IconButton>
-    </>
+    <div className="flex gap-0.5 rounded-[10px] bg-black/[0.04] p-[3px] shadow-inset dark:bg-white/[0.04]">
+      {options.map((o) => (
+        <button
+          key={o}
+          onClick={() => onChange(o)}
+          className={cn(
+            "relative h-7 rounded-[7px] px-3 text-[13px] font-medium capitalize transition-colors",
+            value === o ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {value === o && (
+            <motion.span
+              layoutId={id}
+              className="absolute inset-0 rounded-[7px] bg-surface shadow-btn"
+              transition={{ type: "spring", stiffness: 500, damping: 38 }}
+            />
+          )}
+          <span className="relative">{o}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 
 export default function ComponentDetailPage() {
   const params = useParams();
-  const componentName = params.slug as string;
-  const component = componentsRegistry.find(
-    (c) => c.name.toLowerCase() === componentName.toLowerCase()
-  );
-  const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState("preview");
+  const slug = params.slug as string;
+  const component = componentsRegistry.find((c) => c.slug === slug);
+  const [sourceCode, setSourceCode] = useState<string | null>(null);
+  const [view, setView] = useState<"preview" | "code">("preview");
+  const [installTab, setInstallTab] = useState<"cli" | "manual">("cli");
+  const [replay, setReplay] = useState(0);
+
+  useEffect(() => {
+    if (!component) return;
+    fetch(`/r/${component.slug}.json`)
+      .then((r) => r.json())
+      .then((data) => setSourceCode(data.files?.[0]?.content ?? null))
+      .catch(() => setSourceCode(null));
+  }, [component]);
 
   if (!component) {
     return (
-      <div className="min-h-screen bg-white dark:bg-neutral-950">
-        <Header />
-        <main className="pt-32 pb-24 mx-auto max-w-7xl px-6">
-          <p className="text-neutral-900 dark:text-neutral-100">Component not found</p>
-        </main>
-      </div>
+      <PageShell>
+        <div className="px-10 py-32 text-center text-sm text-muted-foreground">Component not found.</div>
+      </PageShell>
     );
   }
 
-  const example = componentExamples[componentName.toLowerCase()] || (
-    <p className="text-neutral-500 dark:text-neutral-400">Preview not available</p>
-  );
-
-  const codeExample = `import { ${component.name} } from "@/components/ui/${component.name.toLowerCase()}";
-
-export function MyComponent() {
-  return (
-    <${component.name}>
-      Content
-    </${component.name}>
-  );
-}`;
-
-  const copyCode = () => {
-    navigator.clipboard.writeText(codeExample);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const installCommand = getInstallCommand(component.slug);
+  const currentIndex = componentsRegistry.findIndex((c) => c.slug === slug);
+  const prev = componentsRegistry[currentIndex - 1];
+  const next = componentsRegistry[currentIndex + 1];
+  const targetPath = `components/${component.path.replace(/^\/components\//, "")}`;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
-      <Header />
-      
-      <main className="pt-32 pb-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-8"
-          >
-            <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-              <Link href="/components" className="hover:text-neutral-900 dark:hover:text-neutral-100 flex items-center gap-1">
-                <ArrowLeft className="w-4 h-4" />
-                Components
-              </Link>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-neutral-900 dark:text-neutral-100">{component.name}</span>
-            </div>
-
-            <div>
-              <h1 className="font-serif text-5xl font-light mb-4 text-neutral-900 dark:text-neutral-100">{component.name}</h1>
-              <p className="text-neutral-500 dark:text-neutral-400 text-lg">{component.description}</p>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="border-neutral-300 dark:border-neutral-700">{component.category}</Badge>
-              {component.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300">{tag}</Badge>
-              ))}
-            </div>
-          </motion.div>
-
-          <div className="mt-12">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-6 bg-neutral-100 dark:bg-neutral-800">
-                <TabsTrigger value="preview" className="data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 data-[state=active]:text-neutral-900 dark:data-[state=active]:text-neutral-100">Preview</TabsTrigger>
-                <TabsTrigger value="code" className="data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 data-[state=active]:text-neutral-900 dark:data-[state=active]:text-neutral-100">Code</TabsTrigger>
-                <TabsTrigger value="props" className="data-[state=active]:bg-white dark:data-[state=active]:bg-neutral-700 data-[state=active]:text-neutral-900 dark:data-[state=active]:text-neutral-100">Props</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="preview">
-                <Card className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-                  <CardContent className="p-12">
-                    <div className="flex items-center justify-center min-h-[200px]">
-                      {example}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="code">
-                <Card className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-normal text-neutral-900 dark:text-neutral-100">Installation</CardTitle>
-                    <Button variant="ghost" size="sm" onClick={() => {
-                      navigator.clipboard.writeText(component.installation);
-                    }}>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy
-                    </Button>
-                  </CardHeader>
-                  <CardContent>
-                    <pre className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg overflow-x-auto text-sm text-neutral-700 dark:text-neutral-300">
-                      <code>{component.installation}</code>
-                    </pre>
-                  </CardContent>
-                </Card>
-
-                <Card className="mt-4 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-normal text-neutral-900 dark:text-neutral-100">Usage</CardTitle>
-                    <Button variant="ghost" size="sm" onClick={copyCode}>
-                      {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-                      {copied ? "Copied" : "Copy"}
-                    </Button>
-                  </CardHeader>
-                  <CardContent>
-                    <pre className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg overflow-x-auto text-sm text-neutral-700 dark:text-neutral-300">
-                      <code>{codeExample}</code>
-                    </pre>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="props">
-                <Card className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-                  <CardHeader>
-                    <CardTitle className="text-neutral-900 dark:text-neutral-100">API Reference</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-neutral-500 dark:text-neutral-400">
-                      This component is built on top of Radix UI primitives and accepts all native HTML attributes.
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+    <PageShell>
+      <Section marks={false} bleed={false}>
+        <div className="px-6 pt-14 pb-10 md:px-10">
+          <nav className="flex items-center gap-1 text-[13px] text-muted-foreground">
+            <Link href="/components" className="transition-colors hover:text-foreground">
+              Components
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5 opacity-50" />
+            <span className="text-foreground">{component.name}</span>
+          </nav>
+          <h1 className="mt-6 text-4xl font-semibold tracking-[-0.04em] text-foreground md:text-5xl">
+            {component.name}
+          </h1>
+          <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">{component.description}</p>
+          <div className="mt-5 flex flex-wrap gap-1.5">
+            <span className="rounded-md bg-neutral-900 px-2 py-0.5 text-[11px] font-medium text-white dark:bg-white dark:text-neutral-900">
+              {component.category}
+            </span>
+            {component.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md bg-surface px-2 py-0.5 font-mono text-[11px] text-muted-foreground shadow-btn"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
-      </main>
-    </div>
+      </Section>
+
+      <Section>
+        <div className="flex items-center justify-between px-6 py-3 md:px-10">
+          <Segmented id="view-tab" value={view} options={["preview", "code"] as const} onChange={setView} />
+          <div className="flex items-center gap-1">
+            {view === "preview" && (
+              <button
+                onClick={() => setReplay((r) => r + 1)}
+                aria-label="Reset preview"
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-surface hover:text-foreground hover:shadow-btn"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+            )}
+            {view === "code" && sourceCode && <CopyButton text={sourceCode} />}
+          </div>
+        </div>
+        <div className="px-3 pb-3 md:px-6 md:pb-6">
+          <div className="relative rounded-[22px] bg-black/[0.02] p-1.5 shadow-inset dark:bg-white/[0.02]">
+            {view === "preview" ? (
+              <div
+                key={replay}
+                className="bg-dots flex min-h-[440px] items-center justify-center rounded-2xl bg-background px-6 py-16 shadow-hairline"
+              >
+                <Preview slug={component.slug} />
+              </div>
+            ) : (
+              <pre className="max-h-[520px] min-h-[440px] overflow-auto rounded-2xl bg-surface p-5 font-mono text-[12.5px] leading-relaxed text-neutral-700 shadow-hairline dark:text-neutral-300">
+                <code>{sourceCode ?? "// Source not built yet — run `npm run build:registry`."}</code>
+              </pre>
+            )}
+          </div>
+        </div>
+      </Section>
+
+      <Section>
+        <div className="grid gap-8 px-6 py-12 md:grid-cols-[220px_1fr] md:px-10">
+          <div>
+            <Eyebrow>Installation</Eyebrow>
+            <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+              Add it with the shadcn CLI, or copy the source into your project.
+            </p>
+          </div>
+          <div className="min-w-0">
+            <Segmented id="install-tab" value={installTab} options={["cli", "manual"] as const} onChange={setInstallTab} />
+            <div className="mt-3 overflow-hidden rounded-xl bg-surface shadow-soft">
+              {installTab === "cli" ? (
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <code className="min-w-0 flex-1 truncate font-mono text-[13px] text-foreground">
+                    <span className="text-muted-foreground select-none">$ </span>
+                    {installCommand}
+                  </code>
+                  <CopyButton text={installCommand} />
+                </div>
+              ) : (
+                <ol className="divide-y divide-line">
+                  {component.dependencies && component.dependencies.length > 0 && (
+                    <li className="flex items-center gap-3 px-4 py-3">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-surface-2 font-mono text-[10px] text-muted-foreground shadow-hairline">
+                        1
+                      </span>
+                      <code className="min-w-0 flex-1 truncate font-mono text-[13px] text-foreground">
+                        npm i {component.dependencies.join(" ")}
+                      </code>
+                      <CopyButton text={`npm i ${component.dependencies.join(" ")}`} />
+                    </li>
+                  )}
+                  <li className="flex items-center gap-3 px-4 py-3">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-surface-2 font-mono text-[10px] text-muted-foreground shadow-hairline">
+                      {component.dependencies?.length ? 2 : 1}
+                    </span>
+                    <p className="min-w-0 flex-1 text-[13px] text-muted-foreground">
+                      Copy the source into{" "}
+                      <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[12px] text-foreground shadow-inset">
+                        {targetPath}
+                      </code>
+                    </p>
+                    {sourceCode && <CopyButton text={sourceCode} />}
+                  </li>
+                </ol>
+              )}
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section>
+        <div className="grid grid-cols-2 gap-px bg-line">
+          {[prev, next].map((c, i) =>
+            c ? (
+              <Link
+                key={c.slug}
+                href={`/components/${c.slug}`}
+                className={cn(
+                  "group relative flex flex-col gap-1 bg-background px-6 py-6 transition-colors hover:bg-black/[0.015] md:px-10 dark:hover:bg-white/[0.02]",
+                  i === 1 && "items-end text-right"
+                )}
+              >
+                <span className="flex items-center gap-1 font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
+                  {i === 0 && <ArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-0.5" />}
+                  {i === 0 ? "Previous" : "Next"}
+                  {i === 1 && <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />}
+                </span>
+                <span className="text-sm font-medium text-foreground">{c.name}</span>
+              </Link>
+            ) : (
+              <div key={i} className="bg-hatch bg-background" />
+            )
+          )}
+        </div>
+      </Section>
+    </PageShell>
   );
 }

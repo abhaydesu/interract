@@ -1,0 +1,193 @@
+[
+  {
+    "name": "command-menu",
+    "type": "registry:ui",
+    "description": "A ⌘K command palette with filtering, keyboard navigation and a spring-driven highlight.",
+    "category": "Blocks",
+    "tags": [
+      "command",
+      "palette",
+      "search",
+      "keyboard"
+    ]
+  },
+  {
+    "name": "notification-stack",
+    "type": "registry:ui",
+    "description": "Stacked notifications that fan out on hover and can be dismissed individually.",
+    "category": "Blocks",
+    "tags": [
+      "notification",
+      "toast",
+      "stack"
+    ]
+  },
+  {
+    "name": "stat-card",
+    "type": "registry:ui",
+    "description": "KPI card with a range switcher, morphing sparkline and hover scrubber.",
+    "category": "Blocks",
+    "tags": [
+      "stats",
+      "chart",
+      "sparkline",
+      "dashboard"
+    ]
+  },
+  {
+    "name": "pricing-toggle",
+    "type": "registry:ui",
+    "description": "Pricing card with a segmented billing switch and rolling digits.",
+    "category": "Blocks",
+    "tags": [
+      "pricing",
+      "toggle",
+      "number"
+    ]
+  },
+  {
+    "name": "now-playing",
+    "type": "registry:ui",
+    "description": "Compact media player with dot-matrix art, live equalizer and scrubbable progress.",
+    "category": "Blocks",
+    "tags": [
+      "media",
+      "player",
+      "audio"
+    ]
+  },
+  {
+    "name": "otp-input",
+    "type": "registry:ui",
+    "description": "One-time-code field with native paste/autofill, animated slots and verify states.",
+    "category": "Blocks",
+    "tags": [
+      "otp",
+      "input",
+      "form",
+      "auth"
+    ]
+  },
+  {
+    "name": "settings-list",
+    "type": "registry:ui",
+    "description": "Grouped preference rows with tactile, spring-loaded switches.",
+    "category": "Blocks",
+    "tags": [
+      "settings",
+      "switch",
+      "toggle",
+      "form"
+    ]
+  },
+  {
+    "name": "avatar-stack",
+    "type": "registry:ui",
+    "description": "Overlapping team avatars that fan out on hover, with an inline invite action.",
+    "category": "Blocks",
+    "tags": [
+      "avatar",
+      "team",
+      "group"
+    ]
+  },
+  {
+    "name": "button",
+    "type": "registry:ui",
+    "description": "A clickable button component with multiple variants, sizes, and an interract-specific motion variant.",
+    "category": "Actions",
+    "tags": [
+      "button",
+      "click",
+      "action"
+    ]
+  },
+  {
+    "name": "card",
+    "type": "registry:ui",
+    "description": "A container component for grouping related content and actions.",
+    "category": "Layout",
+    "tags": [
+      "card",
+      "container",
+      "box"
+    ]
+  },
+  {
+    "name": "accordion",
+    "type": "registry:ui",
+    "description": "A vertically stacked set of interactive headings that expand to reveal content.",
+    "category": "Disclosure",
+    "tags": [
+      "accordion",
+      "expand",
+      "collapse"
+    ]
+  },
+  {
+    "name": "popover",
+    "type": "registry:ui",
+    "description": "A floating panel that appears near a trigger element.",
+    "category": "Overlay",
+    "tags": [
+      "popover",
+      "tooltip",
+      "floating"
+    ]
+  },
+  {
+    "name": "tooltip",
+    "type": "registry:ui",
+    "description": "A popup that displays information related to an element.",
+    "category": "Overlay",
+    "tags": [
+      "tooltip",
+      "info",
+      "hint"
+    ]
+  },
+  {
+    "name": "badge",
+    "type": "registry:ui",
+    "description": "A small status indicator or label component.",
+    "category": "Data Display",
+    "tags": [
+      "badge",
+      "label",
+      "tag"
+    ]
+  },
+  {
+    "name": "hover-card",
+    "type": "registry:ui",
+    "description": "A card that appears on hover with additional information.",
+    "category": "Overlay",
+    "tags": [
+      "hover",
+      "card",
+      "preview"
+    ]
+  },
+  {
+    "name": "icon-button",
+    "type": "registry:ui",
+    "description": "A button component specifically designed for icons.",
+    "category": "Actions",
+    "tags": [
+      "button",
+      "icon",
+      "action"
+    ]
+  },
+  {
+    "name": "animated-icon",
+    "type": "registry:ui",
+    "description": "An icon component with built-in motion and micro-interactions.",
+    "category": "Data Display",
+    "tags": [
+      "icon",
+      "motion",
+      "animation"
+    ]
+  }
+]

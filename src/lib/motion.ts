@@ -1,4 +1,4 @@
-import { type HTMLMotionProps, type Variants } from "framer-motion";
+import { type HTMLMotionProps, type Variants } from "motion/react";
 
 export const motionVariants = {
   fadeIn: {

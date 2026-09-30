@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion, type MotionValue, type useMotionTemplate } from "framer-motion";
+import { motion, type MotionValue, type useMotionTemplate } from "motion/react";
 import { useMemo } from "react";
 
 export function useHoverScale(scale: number = 1.02) {

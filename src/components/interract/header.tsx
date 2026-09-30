@@ -4,9 +4,9 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
+import { Github, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { GeistPixelSquare } from "geist/font/pixel";
 
 const navigation = [
   { name: "Components", href: "/components" },
@@ -17,73 +17,154 @@ const navigation = [
 
 export function Header() {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const { scrollY } = useScroll();
+  const [scrolled, setScrolled] = React.useState(false);
+  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
+  const [open, setOpen] = React.useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrolled(latest > 24);
+  });
+
+  React.useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md">
-      <nav className="mx-auto max-w-7xl px-6 py-4">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className={`${GeistPixelSquare.className} text-2xl font-semibold tracking-tight`}>
-              Interract
-            </span>
-          </Link>
+    <div className="fixed inset-x-0 top-0 z-[60] px-4 pt-3">
+      <motion.header
+        initial={{ y: -24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 30 }}
+        className={cn(
+          "mx-auto flex h-12 items-center justify-between rounded-2xl pr-1.5 pl-4 transition-[max-width,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          scrolled || open
+            ? "max-w-3xl bg-white/75 shadow-float backdrop-blur-xl dark:bg-neutral-950/70"
+            : "max-w-6xl bg-transparent"
+        )}
+      >
+        <Link href="/" className="flex items-center gap-2">
+          <LogoMark />
+          <span className="font-pixel text-[17px] tracking-tight text-foreground">
+            Interract
+          </span>
+        </Link>
 
-          <div className="hidden md:flex items-center space-x-8">
+        <nav
+          className="hidden items-center md:flex"
+          onMouseLeave={() => setHoveredIndex(null)}
+        >
+          {navigation.map((item, index) => {
+            const active = pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                onMouseEnter={() => setHoveredIndex(index)}
+                className="relative px-3 py-1.5 text-[13px] font-medium"
+              >
+                <AnimatePresence>
+                  {hoveredIndex === index && (
+                    <motion.span
+                      layoutId="nav-hover"
+                      className="absolute inset-0 rounded-lg bg-black/[0.04] dark:bg-white/[0.06]"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                    />
+                  )}
+                </AnimatePresence>
+                <span
+                  className={cn(
+                    "relative transition-colors",
+                    active
+                      ? "text-foreground"
+                      : "text-neutral-500 hover:text-foreground dark:text-neutral-400"
+                  )}
+                >
+                  {item.name}
+                </span>
+                {active && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-x-3 -bottom-px h-px bg-foreground"
+                  />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="flex items-center gap-1">
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden h-8 items-center gap-1.5 rounded-lg bg-surface px-2.5 text-xs font-medium text-foreground shadow-btn transition-transform active:scale-[0.97] sm:inline-flex"
+          >
+            <Github className="h-3.5 w-3.5" />
+            <span>Star</span>
+            <span className="border-l border-line pl-1.5 font-mono text-[11px] text-muted-foreground">
+              2.4k
+            </span>
+          </a>
+          <ThemeToggle />
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-neutral-500 hover:bg-black/[0.04] md:hidden dark:hover:bg-white/[0.06]"
+            aria-label="Toggle menu"
+            aria-expanded={open}
+          >
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
+      </motion.header>
+
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mx-auto mt-2 max-w-3xl rounded-2xl bg-white/90 p-1.5 shadow-float backdrop-blur-xl md:hidden dark:bg-neutral-950/90"
+          >
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "relative text-sm font-medium transition-colors hover:text-neutral-900 dark:hover:text-neutral-100",
-                  pathname === item.href
-                    ? "text-neutral-900 dark:text-neutral-100"
-                    : "text-neutral-500 dark:text-neutral-400"
+                  "block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-black/[0.04] dark:hover:bg-white/[0.06]",
+                  pathname.startsWith(item.href) ? "text-foreground" : "text-neutral-500"
                 )}
               >
                 {item.name}
-                {pathname === item.href && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-neutral-900 dark:bg-neutral-100" />
-                )}
               </Link>
             ))}
-            <ThemeToggle />
-          </div>
-
-          <div className="flex items-center gap-2 md:hidden">
-            <ThemeToggle />
-            <button
-              className="p-2"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
-        </div>
-
-        {isOpen && (
-          <div className="md:hidden mt-4 pb-4">
-            <div className="flex flex-col space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-neutral-900 dark:hover:text-neutral-100",
-                    pathname === item.href
-                      ? "text-neutral-900 dark:text-neutral-100"
-                      : "text-neutral-500 dark:text-neutral-400"
-                  )}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
+          </motion.nav>
         )}
-      </nav>
-    </header>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export function LogoMark({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "relative grid h-6 w-6 grid-cols-3 gap-[2px] rounded-[7px] bg-neutral-900 p-[5px] shadow-btn-primary dark:bg-white",
+        className
+      )}
+      aria-hidden
+    >
+      {[1, 0, 1, 0, 1, 0, 1, 0, 1].map((on, i) => (
+        <span
+          key={i}
+          className={cn(
+            "rounded-[1px]",
+            on ? "bg-white dark:bg-neutral-900" : "bg-white/25 dark:bg-neutral-900/20"
+          )}
+        />
+      ))}
+    </span>
   );
 }

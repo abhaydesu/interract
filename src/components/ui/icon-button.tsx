@@ -4,19 +4,19 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
 const iconButtonVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-[background-color,box-shadow,transform] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+          "bg-neutral-900 text-white shadow-btn-primary hover:bg-neutral-800 dark:bg-white dark:text-neutral-900",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-red-600 text-white shadow-[0_0_0_1px_rgb(185_28_28),inset_0_1px_0_rgb(255_255_255/0.2)] hover:bg-red-500",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "bg-surface text-foreground shadow-btn hover:bg-surface-2",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-black/[0.04] text-foreground hover:bg-black/[0.07] dark:bg-white/[0.06]",
+        ghost: "text-neutral-500 hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

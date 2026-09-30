@@ -1,21 +1,9 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GeistPixelSquare } from "geist/font/pixel";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
-
-const serif = Cormorant_Garamond({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const sans = Inter({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Interract | Interactive Component Library",
@@ -30,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${GeistPixelSquare.variable} ${sans.variable} ${serif.variable} font-sans antialiased min-h-screen`}
+        className={`${GeistPixelSquare.variable} ${GeistSans.variable} ${GeistMono.variable} font-sans antialiased min-h-screen`}
       >
         <ThemeProvider
           attribute="class"

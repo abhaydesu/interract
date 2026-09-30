@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "animated-icon",
+  "type": "registry:ui",
+  "dependencies": [
+    "motion",
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "interract/animated-icon.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { motion } from \"motion/react\";\nimport { cn } from \"@/lib/utils\";\nimport { LucideIcon } from \"lucide-react\";\n\nexport type AnimationPreset = \"none\" | \"bounce\" | \"pulse\" | \"wiggle\" | \"spin\" | \"shake\";\n\nconst animationVariants: Record<AnimationPreset, any> = {\n  none: {},\n  bounce: {\n    animate: {\n      y: [0, -4, 0],\n      transition: {\n        repeat: Infinity,\n        duration: 0.6,\n        ease: \"easeInOut\",\n      },\n    },\n  },\n  pulse: {\n    animate: {\n      scale: [1, 1.1, 1],\n      transition: {\n        repeat: Infinity,\n        duration: 0.8,\n        ease: \"easeInOut\",\n      },\n    },\n  },\n  wiggle: {\n    animate: {\n      rotate: [-5, 5, -5],\n      transition: {\n        repeat: Infinity,\n        duration: 0.5,\n        ease: \"easeInOut\",\n      },\n    },\n  },\n  spin: {\n    animate: {\n      rotate: 360,\n      transition: {\n        repeat: Infinity,\n        duration: 1,\n        ease: \"linear\",\n      },\n    },\n  },\n  shake: {\n    animate: {\n      x: [-2, 2, -2, 2, 0],\n      transition: {\n        repeat: Infinity,\n        duration: 0.4,\n        ease: \"easeInOut\",\n      },\n    },\n  },\n};\n\nexport interface AnimatedIconProps {\n  icon: LucideIcon;\n  preset?: AnimationPreset;\n  className?: string;\n  size?: number;\n}\n\nexport function AnimatedIcon({\n  icon: Icon,\n  preset = \"none\",\n  className,\n  size = 24,\n}: AnimatedIconProps) {\n  if (preset === \"none\") {\n    return <Icon size={size} className={className} />;\n  }\n\n  return (\n    <motion.div\n      className={cn(\"inline-flex\", className)}\n      variants={animationVariants[preset]}\n      initial=\"initial\"\n      whileHover=\"animate\"\n    >\n      <Icon size={size} />\n    </motion.div>\n  );\n}\n\ninterface IconButtonMotionProps {\n  icon: LucideIcon;\n  preset?: AnimationPreset;\n  className?: string;\n  onClick?: () => void;\n}\n\nexport function IconButtonMotion({\n  icon: Icon,\n  preset = \"bounce\",\n  className,\n  onClick,\n}: IconButtonMotionProps) {\n  return (\n    <motion.button\n      type=\"button\"\n      className={cn(\n        \"inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9\",\n        className\n      )}\n      whileHover={{ scale: 1.1 }}\n      whileTap={{ scale: 0.95 }}\n      transition={{ duration: 0.15 }}\n      onClick={onClick}\n    >\n      <AnimatedIcon icon={Icon} preset={preset} />\n    </motion.button>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/interract/animated-icon.tsx"
+    }
+  ]
+}

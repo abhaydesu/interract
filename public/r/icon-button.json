@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon-button",
+  "type": "registry:ui",
+  "dependencies": [
+    "class-variance-authority",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "ui/icon-button.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\nimport { Button } from \"./button\";\n\nconst iconButtonVariants = cva(\n  \"inline-flex items-center justify-center rounded-lg text-sm font-medium transition-[background-color,box-shadow,transform] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4\",\n  {\n    variants: {\n      variant: {\n        default:\n          \"bg-neutral-900 text-white shadow-btn-primary hover:bg-neutral-800 dark:bg-white dark:text-neutral-900\",\n        destructive:\n          \"bg-red-600 text-white shadow-[0_0_0_1px_rgb(185_28_28),inset_0_1px_0_rgb(255_255_255/0.2)] hover:bg-red-500\",\n        outline:\n          \"bg-surface text-foreground shadow-btn hover:bg-surface-2\",\n        secondary:\n          \"bg-black/[0.04] text-foreground hover:bg-black/[0.07] dark:bg-white/[0.06]\",\n        ghost: \"text-neutral-500 hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]\",\n        link: \"text-primary underline-offset-4 hover:underline\",\n      },\n      size: {\n        default: \"h-9 w-9\",\n        sm: \"h-8 w-8\",\n        lg: \"h-11 w-11\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n      size: \"default\",\n    },\n  }\n);\n\nexport interface IconButtonProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement>,\n    VariantProps<typeof iconButtonVariants> {\n  asChild?: boolean;\n}\n\nconst IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(\n  ({ className, variant, size, ...props }, ref) => {\n    return (\n      <Button\n        className={cn(iconButtonVariants({ variant, size, className }))}\n        ref={ref}\n        size=\"icon\"\n        {...props}\n      />\n    );\n  }\n);\nIconButton.displayName = \"IconButton\";\n\nexport { IconButton, iconButtonVariants };\n",
+      "type": "registry:ui",
+      "target": "components/ui/icon-button.tsx"
+    }
+  ]
+}

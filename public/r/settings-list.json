@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "settings-list",
+  "type": "registry:ui",
+  "dependencies": [
+    "motion",
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "blocks/settings-list.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { motion } from \"motion/react\";\nimport { Bell, Lock, Sparkles } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\n\nconst rows = [\n  { id: \"motion\", icon: Sparkles, title: \"Reduced motion\", description: \"Tone down spring animations\" },\n  { id: \"notify\", icon: Bell, title: \"Push notifications\", description: \"Deploys, reviews and mentions\" },\n  { id: \"private\", icon: Lock, title: \"Private registry\", description: \"Only your team can install\" },\n];\n\nexport interface SettingsListProps {\n  className?: string;\n}\n\n/** Grouped preference rows with tactile, spring-loaded switches. */\nexport function SettingsList({ className }: SettingsListProps) {\n  const [state, setState] = React.useState<Record<string, boolean>>({\n    motion: false,\n    notify: true,\n    private: true,\n  });\n\n  return (\n    <div className={cn(\"w-full max-w-[340px] rounded-2xl bg-surface p-1 shadow-raised\", className)}>\n      {rows.map((row, i) => {\n        const Icon = row.icon;\n        const on = state[row.id];\n        return (\n          <label\n            key={row.id}\n            className={cn(\n              \"flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.02]\",\n              i > 0 && \"relative before:absolute before:inset-x-3 before:top-0 before:h-px before:bg-line\"\n            )}\n          >\n            <span className=\"flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-neutral-500 shadow-hairline dark:text-neutral-400\">\n              <Icon className=\"h-4 w-4\" />\n            </span>\n            <span className=\"min-w-0 flex-1\">\n              <span className=\"block text-[13px] font-medium text-foreground\">{row.title}</span>\n              <span className=\"block truncate text-xs text-muted-foreground\">{row.description}</span>\n            </span>\n            <Switch checked={on} onCheckedChange={(v) => setState((s) => ({ ...s, [row.id]: v }))} />\n          </label>\n        );\n      })}\n    </div>\n  );\n}\n\nexport function Switch({\n  checked,\n  onCheckedChange,\n}: {\n  checked: boolean;\n  onCheckedChange: (v: boolean) => void;\n}) {\n  return (\n    <button\n      role=\"switch\"\n      aria-checked={checked}\n      onClick={() => onCheckedChange(!checked)}\n      className={cn(\n        \"relative flex h-[22px] w-[38px] shrink-0 items-center rounded-full p-[3px] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60\",\n        checked\n          ? \"justify-end bg-neutral-900 shadow-[inset_0_1px_2px_rgb(0_0_0/0.3)] dark:bg-white\"\n          : \"justify-start bg-black/[0.08] shadow-inset dark:bg-white/[0.1]\"\n      )}\n    >\n      <motion.span\n        layout\n        transition={{ type: \"spring\", stiffness: 700, damping: 35 }}\n        whileTap={{ width: 20 }}\n        className=\"block h-4 w-4 rounded-full bg-white shadow-[0_1px_2px_rgb(0_0_0/0.2),0_0_0_0.5px_rgb(0_0_0/0.06)] dark:bg-neutral-900\"\n      />\n    </button>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/blocks/settings-list.tsx"
+    }
+  ]
+}
