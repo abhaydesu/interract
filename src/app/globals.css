@@ -10,6 +10,7 @@
   --font-sans: var(--font-geist-sans);
   --font-pixel: var(--font-geist-pixel-square);
   --font-mono: var(--font-geist-mono);
+  --font-bubble: var(--font-cherry-bomb);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -56,6 +57,9 @@
   --shadow-btn-primary: var(--sh-btn-primary);
   --shadow-key: var(--sh-key);
   --shadow-inset: var(--sh-inset);
+  --shadow-keycap: var(--sh-keycap);
+  --shadow-keycap-down: var(--sh-keycap-down);
+  --shadow-bubble: var(--sh-bubble);
 
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
@@ -138,6 +142,23 @@
   --sh-inset:
     inset 0 0 0 1px rgb(10 10 12 / 0.06),
     inset 0 1px 2px rgb(10 10 12 / 0.05);
+  --sh-keycap:
+    0 0 0 1px rgb(10 10 12 / 0.1),
+    0 3px 0 0 rgb(10 10 12 / 0.1),
+    0 5px 10px -3px rgb(10 10 12 / 0.14),
+    inset 0 1px 0 rgb(255 255 255 / 1),
+    inset 0 -2px 0 rgb(10 10 12 / 0.04);
+  --sh-bubble:
+    0 0 0 1px rgb(10 10 12 / 0.07),
+    0 6px 14px -4px rgb(10 10 12 / 0.16),
+    inset 0 -4px 8px rgb(10 10 12 / 0.06),
+    inset 0 2px 0 rgb(255 255 255 / 1);
+  --sh-keycap-down:
+    0 0 0 1px rgb(10 10 12 / 0.1),
+    0 0 0 0 rgb(10 10 12 / 0.1),
+    0 1px 2px rgb(10 10 12 / 0.08),
+    inset 0 1px 3px rgb(10 10 12 / 0.1),
+    inset 0 0 0 rgb(10 10 12 / 0);
 }
 
 .dark {
@@ -212,6 +233,23 @@
   --sh-inset:
     inset 0 0 0 1px rgb(255 255 255 / 0.06),
     inset 0 1px 2px rgb(0 0 0 / 0.4);
+  --sh-keycap:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 3px 0 0 rgb(0 0 0 / 0.9),
+    0 5px 12px -3px rgb(0 0 0 / 0.7),
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    inset 0 -2px 0 rgb(0 0 0 / 0.25);
+  --sh-bubble:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 6px 16px -4px rgb(0 0 0 / 0.7),
+    inset 0 -4px 8px rgb(0 0 0 / 0.35),
+    inset 0 2px 0 rgb(255 255 255 / 0.07);
+  --sh-keycap-down:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 0 0 0 rgb(0 0 0 / 0.9),
+    0 1px 2px rgb(0 0 0 / 0.6),
+    inset 0 1px 3px rgb(0 0 0 / 0.5),
+    inset 0 0 0 rgb(0 0 0 / 0);
 }
 
 @layer base {
@@ -227,6 +265,21 @@
   html {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* keep anchor targets clear of the fixed header */
+    scroll-padding-top: 5.5rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  /* One consistent keyboard focus ring for every interactive element */
+  :where(a, button, input, textarea, select, summary, [role="switch"], [role="slider"], [role="option"], [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  input::placeholder {
+    color: var(--muted-foreground);
   }
   ::selection {
     background: rgb(10 10 12 / 0.9);
@@ -275,11 +328,11 @@
     mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
   }
 
-  .text-balance {
-    text-wrap: balance;
+  .no-scrollbar {
+    scrollbar-width: none;
   }
-  .text-pretty {
-    text-wrap: pretty;
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   /* Soft shimmer across text */

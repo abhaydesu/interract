@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/interract/frame";
+import { siteConfig } from "@/lib/site";
 
 export function CtaSection() {
   return (
@@ -23,7 +24,7 @@ export function CtaSection() {
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="h-10 rounded-[11px] px-5">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+            <a href={siteConfig.github} target="_blank" rel="noopener noreferrer">
               View on GitHub
             </a>
           </Button>

@@ -22,16 +22,20 @@ export interface PricingToggleProps {
 export function PricingToggle({ className }: PricingToggleProps) {
   const [cycle, setCycle] = React.useState<Cycle>("yearly");
   const plan = plans[cycle];
+  const uid = React.useId();
 
   return (
     <div className={cn("w-full max-w-[300px] rounded-2xl bg-surface p-1.5 shadow-raised", className)}>
       <div className="rounded-xl bg-surface-2 p-4 shadow-inset">
         <div className="flex items-center justify-between">
           <p className="text-[13px] font-medium text-foreground">Pro</p>
-          <div className="relative flex rounded-lg bg-black/[0.04] p-0.5 dark:bg-white/[0.05]">
+          <div role="radiogroup" aria-label="Billing cycle" className="relative flex rounded-lg bg-black/[0.04] p-0.5 dark:bg-white/[0.05]">
             {(Object.keys(plans) as Cycle[]).map((c) => (
               <button
                 key={c}
+                type="button"
+                role="radio"
+                aria-checked={cycle === c}
                 onClick={() => setCycle(c)}
                 className={cn(
                   "relative h-6 rounded-md px-2 text-[11px] font-medium capitalize transition-colors",
@@ -40,7 +44,7 @@ export function PricingToggle({ className }: PricingToggleProps) {
               >
                 {cycle === c && (
                   <motion.span
-                    layoutId="pricing-pill"
+                    layoutId={`${uid}-pill`}
                     className="absolute inset-0 rounded-md bg-surface shadow-btn"
                     transition={{ type: "spring", stiffness: 500, damping: 35 }}
                   />
@@ -53,6 +57,7 @@ export function PricingToggle({ className }: PricingToggleProps) {
 
         <div className="mt-5 flex items-end gap-1">
           <span className="mb-1.5 text-lg font-medium text-muted-foreground">$</span>
+          <span className="sr-only">{plan.price}</span>
           <RollingNumber value={plan.price} />
           <span className="mb-1.5 text-xs text-muted-foreground">/mo</span>
           <AnimatePresence>
@@ -81,7 +86,7 @@ export function PricingToggle({ className }: PricingToggleProps) {
           </li>
         ))}
       </ul>
-      <button className="h-9 w-full rounded-[10px] bg-neutral-900 text-[13px] font-medium text-white shadow-btn-primary transition-transform active:scale-[0.98] dark:bg-white dark:text-neutral-900">
+      <button type="button" className="h-9 w-full rounded-[10px] bg-neutral-900 text-[13px] font-medium text-white shadow-btn-primary transition-transform active:scale-[0.98] dark:bg-white dark:text-neutral-900">
         Get started
       </button>
     </div>
@@ -91,7 +96,7 @@ export function PricingToggle({ className }: PricingToggleProps) {
 function RollingNumber({ value }: { value: number }) {
   const digits = String(value).split("");
   return (
-    <span className="relative inline-flex overflow-hidden text-5xl font-semibold tracking-[-0.04em] text-foreground tabular-nums">
+    <span aria-hidden className="relative inline-flex overflow-hidden text-5xl font-semibold tracking-[-0.04em] text-foreground tabular-nums">
       {digits.map((d, i) => (
         <span key={i} className="relative inline-block h-[1em] w-[0.6em] leading-none">
           <AnimatePresence initial={false} mode="popLayout">

@@ -26,7 +26,9 @@ export function PageShell({
           className
         )}
       >
-        <main className="relative pt-20">{children}</main>
+        <main id="main" tabIndex={-1} className="relative pt-20 outline-none">
+          {children}
+        </main>
         {footer && <Footer />}
       </div>
     </div>

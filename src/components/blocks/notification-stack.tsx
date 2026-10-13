@@ -39,7 +39,9 @@ export function NotificationStack({ className }: NotificationStackProps) {
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
       onFocus={() => setExpanded(true)}
-      onBlur={() => setExpanded(false)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setExpanded(false);
+      }}
     >
       <motion.div
         className="relative"
@@ -74,10 +76,11 @@ export function NotificationStack({ className }: NotificationStackProps) {
                   <p className="truncate text-xs text-muted-foreground">{n.body}</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => dismiss(n.id)}
-                  aria-label="Dismiss"
+                  aria-label={`Dismiss “${n.title}”`}
                   tabIndex={expanded || i === 0 ? 0 : -1}
-                  className="absolute -top-1.5 -left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-surface text-neutral-500 opacity-0 shadow-btn transition-opacity hover:text-foreground group-hover/n:opacity-100 focus-visible:opacity-100"
+                  className="absolute -top-1.5 -left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-surface text-neutral-500 opacity-0 shadow-btn transition-opacity group-hover/n:opacity-100 hover:text-foreground focus-visible:opacity-100 pointer-coarse:opacity-100"
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -92,6 +95,7 @@ export function NotificationStack({ className }: NotificationStackProps) {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
+              type="button"
               onClick={() => setItems(initial)}
               className="absolute inset-0 flex items-center justify-center gap-2 rounded-2xl border border-dashed border-line-strong text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >

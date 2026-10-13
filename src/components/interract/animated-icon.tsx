@@ -1,63 +1,36 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export type AnimationPreset = "none" | "bounce" | "pulse" | "wiggle" | "spin" | "shake";
 
-const animationVariants: Record<AnimationPreset, any> = {
-  none: {},
+// Every preset returns to the same resting pose, so ending a hover settles
+// the icon back into place instead of freezing it mid-animation.
+const rest = { x: 0, y: 0, scale: 1, rotate: 0, transition: { duration: 0.2 } };
+
+const animationVariants: Record<Exclude<AnimationPreset, "none">, Variants> = {
   bounce: {
-    animate: {
-      y: [0, -4, 0],
-      transition: {
-        repeat: Infinity,
-        duration: 0.6,
-        ease: "easeInOut",
-      },
-    },
+    rest,
+    animate: { y: [0, -4, 0], transition: { repeat: Infinity, duration: 0.6, ease: "easeInOut" } },
   },
   pulse: {
-    animate: {
-      scale: [1, 1.1, 1],
-      transition: {
-        repeat: Infinity,
-        duration: 0.8,
-        ease: "easeInOut",
-      },
-    },
+    rest,
+    animate: { scale: [1, 1.1, 1], transition: { repeat: Infinity, duration: 0.8, ease: "easeInOut" } },
   },
   wiggle: {
-    animate: {
-      rotate: [-5, 5, -5],
-      transition: {
-        repeat: Infinity,
-        duration: 0.5,
-        ease: "easeInOut",
-      },
-    },
+    rest,
+    animate: { rotate: [-8, 8, -8], transition: { repeat: Infinity, duration: 0.5, ease: "easeInOut" } },
   },
   spin: {
-    animate: {
-      rotate: 360,
-      transition: {
-        repeat: Infinity,
-        duration: 1,
-        ease: "linear",
-      },
-    },
+    rest: { ...rest, transition: { duration: 0 } },
+    animate: { rotate: 360, transition: { repeat: Infinity, duration: 1, ease: "linear" } },
   },
   shake: {
-    animate: {
-      x: [-2, 2, -2, 2, 0],
-      transition: {
-        repeat: Infinity,
-        duration: 0.4,
-        ease: "easeInOut",
-      },
-    },
+    rest,
+    animate: { x: [-2, 2, -2, 2, 0], transition: { repeat: Infinity, duration: 0.4, ease: "easeInOut" } },
   },
 };
 
@@ -66,6 +39,11 @@ export interface AnimatedIconProps {
   preset?: AnimationPreset;
   className?: string;
   size?: number;
+  /**
+   * Drive the animation from outside (e.g. while a parent card is hovered).
+   * When omitted, the icon animates while it is hovered itself.
+   */
+  active?: boolean;
 }
 
 export function AnimatedIcon({
@@ -73,20 +51,24 @@ export function AnimatedIcon({
   preset = "none",
   className,
   size = 24,
+  active,
 }: AnimatedIconProps) {
   if (preset === "none") {
     return <Icon size={size} className={className} />;
   }
 
+  const controlled = active !== undefined;
+
   return (
-    <motion.div
+    <motion.span
       className={cn("inline-flex", className)}
       variants={animationVariants[preset]}
-      initial="initial"
-      whileHover="animate"
+      initial="rest"
+      animate={controlled ? (active ? "animate" : "rest") : "rest"}
+      whileHover={controlled ? undefined : "animate"}
     >
       <Icon size={size} />
-    </motion.div>
+    </motion.span>
   );
 }
 

@@ -28,11 +28,15 @@ export function OtpInput({
   const [status, setStatus] = React.useState<Status>("idle");
   const inputRef = React.useRef<HTMLInputElement>(null);
   const controls = useAnimationControls();
+  // Bumped on every submit/reset so a stale verification can't overwrite newer state.
+  const attempt = React.useRef(0);
 
   const submit = async (code: string) => {
+    const id = ++attempt.current;
     setStatus("verifying");
     await new Promise((r) => setTimeout(r, 900));
     const ok = await verify(code);
+    if (id !== attempt.current) return;
     if (ok) {
       setStatus("success");
     } else {
@@ -51,6 +55,7 @@ export function OtpInput({
   };
 
   const reset = () => {
+    attempt.current++;
     setValue("");
     setStatus("idle");
     inputRef.current?.focus();
@@ -70,7 +75,8 @@ export function OtpInput({
           maxLength={length}
           disabled={status === "verifying" || status === "success"}
           aria-label="Verification code"
-          className="absolute inset-0 z-10 w-full cursor-text opacity-0"
+          aria-invalid={status === "error"}
+          className="absolute inset-0 z-10 w-full cursor-text text-base opacity-0 caret-transparent"
         />
         <div className="flex gap-1.5">
           {Array.from({ length }).map((_, i) => {
@@ -120,6 +126,7 @@ export function OtpInput({
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
             key={status}
+            role="status"
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
@@ -144,8 +151,10 @@ export function OtpInput({
           </motion.span>
         </AnimatePresence>
         <button
+          type="button"
           onClick={reset}
-          className="text-muted-foreground underline decoration-line-strong underline-offset-2 transition-colors hover:text-foreground"
+          disabled={status === "verifying"}
+          className="text-muted-foreground disabled:pointer-events-none disabled:opacity-40 underline decoration-line-strong underline-offset-2 transition-colors hover:text-foreground"
         >
           {status === "success" ? "Reset" : "Resend"}
         </button>

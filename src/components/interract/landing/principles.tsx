@@ -84,8 +84,9 @@ function FileTree() {
     <div className="font-mono text-[11px] leading-5 text-muted-foreground">
       <p>components/</p>
       <p className="pl-3">ui/</p>
-      <p className="pl-6 text-foreground">button.tsx</p>
-      <p className="pl-6">command-menu.tsx</p>
+      <p className="pl-6">button.tsx</p>
+      <p className="pl-3">blocks/</p>
+      <p className="pl-6 text-foreground">command-menu.tsx</p>
     </div>
   );
 }

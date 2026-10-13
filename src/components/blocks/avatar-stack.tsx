@@ -76,6 +76,8 @@ export function AvatarStack({ className }: AvatarStackProps) {
 
       <motion.button
         layout
+        type="button"
+        aria-pressed={invited}
         onClick={() => setInvited((v) => !v)}
         whileTap={{ scale: 0.96 }}
         className={cn(

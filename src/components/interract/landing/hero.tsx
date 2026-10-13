@@ -3,13 +3,17 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRight, Check, Copy } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusMark } from "@/components/interract/frame";
 import { CommandMenu } from "@/components/blocks/command-menu";
 import { NotificationStack } from "@/components/blocks/notification-stack";
 import { StatCard } from "@/components/blocks/stat-card";
 import { AvatarStack } from "@/components/blocks/avatar-stack";
+import { useCopy } from "@/hooks/use-copy";
+import { componentsRegistry, getInstallCommand } from "@/lib/registry";
+
+const blockCount = componentsRegistry.filter((c) => c.category === "Blocks").length;
+const installCmd = getInstallCommand("button");
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -20,8 +24,7 @@ const rise = (delay: number) => ({
 });
 
 export function HeroSection() {
-  const [copied, setCopied] = useState(false);
-  const installCmd = "npx shadcn@latest add https://interract.dev/r/button.json";
+  const { copied, copy } = useCopy(1800);
 
   return (
     <section className="relative">
@@ -31,13 +34,13 @@ export function HeroSection() {
       <div className="relative px-6 pt-20 pb-14 text-center md:pt-28">
         <motion.div {...rise(0)} className="flex justify-center">
           <Link
-            href="/components"
+            href="/components?category=Blocks"
             className="group inline-flex items-center gap-2 rounded-full bg-surface py-1 pr-3 pl-1 text-xs text-neutral-600 shadow-btn transition-shadow hover:shadow-soft dark:text-neutral-400"
           >
             <span className="rounded-full bg-neutral-900 px-2 py-0.5 text-[10px] font-medium text-white dark:bg-white dark:text-neutral-900">
               New
             </span>
-            8 interactive blocks just landed
+            {blockCount} interactive blocks just landed
             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
@@ -74,11 +77,9 @@ export function HeroSection() {
 
         <motion.div {...rise(0.32)} className="mt-6 flex justify-center">
           <button
-            onClick={() => {
-              navigator.clipboard.writeText(installCmd);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1800);
-            }}
+            type="button"
+            onClick={() => copy(installCmd)}
+            aria-label={copied ? "Install command copied" : "Copy install command"}
             className="group flex max-w-full items-center gap-2.5 rounded-lg px-3 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:bg-black/[0.03] hover:text-foreground dark:hover:bg-white/[0.04]"
           >
             <span className="text-neutral-300 dark:text-neutral-600">$</span>
@@ -86,7 +87,7 @@ export function HeroSection() {
             {copied ? (
               <Check className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
             ) : (
-              <Copy className="h-3.5 w-3.5 shrink-0 opacity-50 group-hover:opacity-100" />
+              <Copy className="h-3.5 w-3.5 shrink-0 opacity-50 group-hover:opacity-100 pointer-coarse:opacity-100" />
             )}
           </button>
         </motion.div>
@@ -110,26 +111,28 @@ function HeroStage() {
         <PlusMark className="-top-[5px] -right-[5px]" />
         <PlusMark className="-bottom-[5px] -left-[5px]" />
         <PlusMark className="-right-[5px] -bottom-[5px]" />
-        <div className="bg-dots relative flex min-h-[520px] items-center justify-center overflow-hidden rounded-[22px] bg-background px-4 py-12 shadow-hairline md:min-h-[560px]">
+        <div className="bg-dots relative flex min-h-[460px] items-center justify-center overflow-hidden rounded-[22px] bg-background px-3 pt-12 pb-8 shadow-hairline sm:px-4 md:min-h-[560px] md:py-12">
           {/* window chrome */}
           <div className="absolute top-4 left-5 flex gap-1.5">
             {[0, 1, 2].map((i) => (
               <span key={i} className="h-2.5 w-2.5 rounded-full bg-black/[0.08] dark:bg-white/[0.08]" />
             ))}
           </div>
-          <span className="absolute top-3.5 right-5 font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+          <span className="absolute top-3.5 right-5 font-mono text-[10px] text-muted-foreground">
             Live · try it
           </span>
 
-          <Floating className="absolute top-16 left-8 hidden lg:block" delay={0.6}>
+          {/* Side mocks need fixed widths: inside an absolutely positioned
+              wrapper, their w-full would shrink to nothing. */}
+          <Floating className="absolute top-16 left-8 hidden w-[280px] xl:block" delay={0.6}>
             <NotificationStack />
           </Floating>
 
-          <Floating className="relative z-10" delay={0.45}>
+          <Floating className="relative z-10 w-full max-w-[420px]" delay={0.45}>
             <CommandMenu />
           </Floating>
 
-          <Floating className="absolute right-8 bottom-12 hidden lg:block" delay={0.75}>
+          <Floating className="absolute right-8 bottom-12 hidden w-[280px] xl:block" delay={0.75}>
             <StatCard />
           </Floating>
 

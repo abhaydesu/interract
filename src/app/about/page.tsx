@@ -1,7 +1,15 @@
-import { Accessibility, Github, Sparkles, SwatchBook, Twitter } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Accessibility, ArrowRight, Github, Sparkles, SwatchBook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/interract/page-shell";
 import { Eyebrow, Section } from "@/components/interract/frame";
+import { siteConfig } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "Why Interract exists and what it's built with.",
+};
 
 const pillars = [
   { icon: Accessibility, title: "Accessible", body: "Built on Radix UI primitives for full accessibility support out of the box." },
@@ -35,7 +43,7 @@ export default function AboutPage() {
               <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-surface text-muted-foreground shadow-btn">
                 <Icon className="h-4 w-4" />
               </span>
-              <h3 className="mt-6 text-sm font-medium text-foreground">{title}</h3>
+              <h2 className="mt-6 text-sm font-medium text-foreground">{title}</h2>
               <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{body}</p>
             </div>
           ))}
@@ -54,16 +62,17 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="outline" asChild>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-                <Github /> GitHub
+              <a href={siteConfig.github} target="_blank" rel="noopener noreferrer">
+                <Github /> Source on GitHub
               </a>
             </Button>
-            <Button variant="outline" asChild>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                <Twitter /> Twitter
-              </a>
+            <Button asChild className="group">
+              <Link href="/components">
+                Browse components
+                <ArrowRight className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
             </Button>
           </div>
         </div>

@@ -34,7 +34,7 @@ export function Section({
       {bleed && (
         <div
           aria-hidden
-          className="pointer-events-none absolute top-0 left-1/2 h-px w-screen -translate-x-1/2 bg-line"
+          className="section-rule pointer-events-none absolute top-0 left-1/2 h-px w-screen -translate-x-1/2 bg-line"
         />
       )}
       {marks && (
@@ -103,7 +103,7 @@ export function Eyebrow({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 font-mono text-[11px] tracking-wider text-muted-foreground uppercase",
+        "flex items-center gap-2 font-mono text-[12px] text-muted-foreground",
         className
       )}
     >

@@ -41,6 +41,11 @@ export function CommandMenu({ className, onSelect }: CommandMenuProps) {
   const [query, setQuery] = React.useState("");
   const [active, setActive] = React.useState(0);
   const [ran, setRan] = React.useState<string | null>(null);
+  const uid = React.useId();
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const ranTimer = React.useRef<number | undefined>(undefined);
+
+  React.useEffect(() => () => window.clearTimeout(ranTimer.current), []);
 
   const filtered = items.filter((i) => i.label.toLowerCase().includes(query.toLowerCase()));
   const groups = Array.from(new Set(filtered.map((i) => i.group)));
@@ -49,19 +54,47 @@ export function CommandMenu({ className, onSelect }: CommandMenuProps) {
   const run = (item: Item) => {
     setRan(item.label);
     onSelect?.(item.id);
-    window.setTimeout(() => setRan(null), 1600);
+    window.clearTimeout(ranTimer.current);
+    ranTimer.current = window.setTimeout(() => setRan(null), 1600);
+  };
+
+  const moveTo = (i: number) => {
+    setActive(i);
+    // Keep the highlighted row visible inside the list (without scrolling the page).
+    const list = listRef.current;
+    const row = list?.querySelector<HTMLElement>(`[data-index="${i}"]`);
+    if (!list || !row) return;
+    const pad = 6;
+    if (i === 0) {
+      list.scrollTop = 0;
+    } else if (row.offsetTop - pad < list.scrollTop) {
+      list.scrollTop = row.offsetTop - pad;
+    } else if (row.offsetTop + row.offsetHeight + pad > list.scrollTop + list.clientHeight) {
+      list.scrollTop = row.offsetTop + row.offsetHeight + pad - list.clientHeight;
+    }
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if (!filtered.length && e.key !== "Escape") return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActive((a) => Math.min(a + 1, filtered.length - 1));
+      moveTo((activeIndex + 1) % filtered.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActive((a) => Math.max(a - 1, 0));
+      moveTo((activeIndex - 1 + filtered.length) % filtered.length);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      moveTo(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      moveTo(filtered.length - 1);
     } else if (e.key === "Enter" && filtered[activeIndex]) {
       e.preventDefault();
       run(filtered[activeIndex]);
+    } else if (e.key === "Escape" && query) {
+      e.preventDefault();
+      setQuery("");
+      setActive(0);
     }
   };
 
@@ -83,14 +116,32 @@ export function CommandMenu({ className, onSelect }: CommandMenuProps) {
           onKeyDown={onKeyDown}
           placeholder="Type a command or search…"
           aria-label="Command"
-          className="h-12 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
+          role="combobox"
+          aria-expanded
+          aria-controls={`${uid}-list`}
+          aria-activedescendant={filtered[activeIndex] ? `${uid}-${filtered[activeIndex].id}` : undefined}
+          autoComplete="off"
+          spellCheck={false}
+          className="h-12 min-w-0 flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-neutral-400 focus-visible:outline-none sm:text-sm dark:placeholder:text-neutral-600"
         />
-        <kbd className="rounded-[5px] bg-surface px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground shadow-key">
+        <button
+          type="button"
+          onClick={() => {
+            setQuery("");
+            setActive(0);
+          }}
+          tabIndex={-1}
+          aria-hidden
+          className={cn(
+            "rounded-[5px] bg-surface px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground shadow-key transition-opacity",
+            !query && "pointer-events-none opacity-50"
+          )}
+        >
           ESC
-        </kbd>
+        </button>
       </div>
 
-      <div className="max-h-[272px] overflow-y-auto p-1.5" role="listbox">
+      <div ref={listRef} id={`${uid}-list`} className="relative max-h-[272px] overflow-y-auto overscroll-contain p-1.5" role="listbox">
         {filtered.length === 0 && (
           <p className="py-10 text-center text-sm text-muted-foreground">No results for “{query}”</p>
         )}
@@ -106,15 +157,19 @@ export function CommandMenu({ className, onSelect }: CommandMenuProps) {
                 return (
                   <button
                     key={item.id}
+                    id={`${uid}-${item.id}`}
+                    data-index={idx}
+                    type="button"
+                    tabIndex={-1}
                     role="option"
                     aria-selected={isActive}
-                    onMouseMove={() => setActive(idx)}
+                    onMouseMove={() => idx !== activeIndex && setActive(idx)}
                     onClick={() => run(item)}
                     className="relative flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-[13px]"
                   >
                     {isActive && (
                       <motion.span
-                        layoutId="cmd-active"
+                        layoutId={`${uid}-active`}
                         className="absolute inset-0 rounded-lg bg-black/[0.045] dark:bg-white/[0.06]"
                         transition={{ type: "spring", stiffness: 600, damping: 40 }}
                       />

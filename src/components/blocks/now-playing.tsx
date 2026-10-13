@@ -33,6 +33,7 @@ export interface NowPlayingProps {
 export function NowPlaying({ className }: NowPlayingProps) {
   const [playing, setPlaying] = React.useState(false);
   const [time, setTime] = React.useState(71);
+  const [dragging, setDragging] = React.useState(false);
 
   React.useEffect(() => {
     if (!playing) return;
@@ -68,26 +69,44 @@ export function NowPlaying({ className }: NowPlayingProps) {
 
       <div className="mt-4 px-0.5">
         <div
-          className="group relative h-4 cursor-pointer touch-none"
+          className="group relative h-4 cursor-pointer touch-none rounded-full"
           onPointerDown={(e) => {
             e.currentTarget.setPointerCapture(e.pointerId);
+            setDragging(true);
             scrub(e);
           }}
-          onPointerMove={(e) => e.buttons === 1 && scrub(e)}
+          onPointerMove={(e) => dragging && scrub(e)}
+          onPointerUp={() => setDragging(false)}
+          onPointerCancel={() => setDragging(false)}
+          onKeyDown={(e) => {
+            const step = { ArrowRight: 5, ArrowUp: 5, ArrowLeft: -5, ArrowDown: -5, PageUp: 30, PageDown: -30 }[e.key];
+            if (step !== undefined) {
+              e.preventDefault();
+              setTime((t) => Math.min(Math.max(t + step, 0), DURATION - 1));
+            } else if (e.key === "Home" || e.key === "End") {
+              e.preventDefault();
+              setTime(e.key === "Home" ? 0 : DURATION - 1);
+            }
+          }}
+          tabIndex={0}
           role="slider"
           aria-label="Seek"
           aria-valuemin={0}
           aria-valuemax={DURATION}
           aria-valuenow={time}
+          aria-valuetext={`${format(time)} of ${format(DURATION)}`}
         >
-          <div className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 overflow-hidden rounded-full bg-black/[0.06] transition-[height] group-hover:h-1.5 dark:bg-white/[0.08]">
+          <div className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 overflow-hidden rounded-full bg-black/[0.06] transition-[height] group-hover:h-1.5 group-focus-visible:h-1.5 dark:bg-white/[0.08]">
             <div
-              className="h-full rounded-full bg-foreground transition-[width] duration-300 ease-linear"
+              className={cn("h-full rounded-full bg-foreground", !dragging && "transition-[width] duration-300 ease-linear")}
               style={{ width: `${(time / DURATION) * 100}%` }}
             />
           </div>
           <div
-            className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 scale-0 rounded-full bg-surface shadow-btn transition-[transform,left] duration-300 ease-linear group-hover:scale-100"
+            className={cn(
+              "absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 scale-0 rounded-full bg-surface shadow-btn group-hover:scale-100 group-focus-visible:scale-100 pointer-coarse:scale-100",
+              dragging ? "scale-100 transition-transform" : "transition-[transform,left] duration-300 ease-linear"
+            )}
             style={{ left: `${(time / DURATION) * 100}%` }}
           />
         </div>
@@ -102,6 +121,7 @@ export function NowPlaying({ className }: NowPlayingProps) {
           <SkipBack className="h-4 w-4" fill="currentColor" />
         </ControlButton>
         <motion.button
+          type="button"
           whileTap={{ scale: 0.92 }}
           onClick={() => setPlaying((p) => !p)}
           aria-label={playing ? "Pause" : "Play"}
@@ -139,6 +159,7 @@ function ControlButton({
 }) {
   return (
     <motion.button
+      type="button"
       whileTap={{ scale: 0.88 }}
       onClick={onClick}
       aria-label={label}

@@ -46,7 +46,7 @@ export function FeaturedComponents() {
               </div>
               <Link
                 href={`/components/${slug}`}
-                className="flex items-center justify-between gap-4 border-t border-line px-6 py-4 transition-colors hover:bg-black/[0.015] dark:hover:bg-white/[0.02]"
+                className="flex items-center justify-between gap-4 border-t border-line px-6 py-4 transition-colors hover:bg-[color-mix(in_oklab,var(--background)_97.5%,var(--foreground))] "
               >
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-foreground">{meta.name}</p>

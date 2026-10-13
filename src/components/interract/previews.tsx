@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Bell, Heart, Home, Settings, Sparkles, Star, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { IconButton } from "@/components/ui/icon-button";
+import { useCopy } from "@/hooks/use-copy";
 import { AnimatedIcon } from "@/components/interract/animated-icon";
 import { CommandMenu } from "@/components/blocks/command-menu";
 import { NotificationStack } from "@/components/blocks/notification-stack";
@@ -106,12 +108,23 @@ function PopoverDemo() {
           <input
             readOnly
             value="interract.dev/c/button"
-            className="h-8 flex-1 rounded-lg bg-surface-2 px-2.5 font-mono text-[11px] text-muted-foreground shadow-inset outline-none"
+            aria-label="Share link"
+            onFocus={(e) => e.currentTarget.select()}
+            className="h-8 min-w-0 flex-1 rounded-lg bg-surface-2 px-2.5 font-mono text-[11px] text-muted-foreground shadow-inset outline-none"
           />
-          <Button size="sm" className="h-8">Copy</Button>
+          <CopyLinkButton text="https://interract.dev/c/button" />
         </div>
       </PopoverContent>
     </Popover>
+  );
+}
+
+function CopyLinkButton({ text }: { text: string }) {
+  const { copied, copy } = useCopy();
+  return (
+    <Button size="sm" className="h-8 w-[68px]" onClick={() => copy(text)}>
+      {copied ? "Copied" : "Copy"}
+    </Button>
   );
 }
 
@@ -148,9 +161,9 @@ function HoverCardDemo() {
       Built by{" "}
       <HoverCard openDelay={100}>
         <HoverCardTrigger asChild>
-          <a href="#" className="font-medium text-foreground underline decoration-line-strong underline-offset-4">
+          <Link href="/about" className="rounded-sm font-medium text-foreground underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-foreground">
             @interract
-          </a>
+          </Link>
         </HoverCardTrigger>
         <HoverCardContent className="w-64">
           <div className="flex gap-3">
@@ -188,15 +201,22 @@ function AnimatedIconDemo() {
     [Zap, "shake"],
     [Sparkles, "bounce"],
   ] as const;
+  const [active, setActive] = React.useState<string | null>(null);
   return (
     <div className="flex gap-2">
       {presets.map(([Icon, preset]) => (
-        <div
+        <button
           key={preset}
-          className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface text-neutral-600 shadow-btn dark:text-neutral-300"
+          type="button"
+          aria-label={`${preset} preset`}
+          onPointerEnter={() => setActive(preset)}
+          onPointerLeave={() => setActive(null)}
+          onFocus={() => setActive(preset)}
+          onBlur={() => setActive(null)}
+          className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface text-neutral-600 shadow-btn transition-colors hover:text-foreground dark:text-neutral-300"
         >
-          <AnimatedIcon icon={Icon} preset={preset} size={18} />
-        </div>
+          <AnimatedIcon icon={Icon} preset={preset} size={18} active={active === preset} />
+        </button>
       ))}
     </div>
   );

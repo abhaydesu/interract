@@ -39,10 +39,12 @@ export interface StatCardProps {
 export function StatCard({ className }: StatCardProps) {
   const [range, setRange] = React.useState<Range>("30D");
   const [hover, setHover] = React.useState<number | null>(null);
-  const gradientId = React.useId();
+  const uid = React.useId();
+  const gradientId = `${uid}-fill`;
   const r = ranges[range];
   const points = toPoints(r.data);
   const path = toPath(points);
+  const area = `${path} L ${W},${H} L 0,${H} Z`;
 
   const onMove = (e: React.PointerEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -74,7 +76,10 @@ export function StatCard({ className }: StatCardProps) {
       <div className="relative mt-4">
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          className="h-[84px] w-full overflow-visible"
+          className="h-[84px] w-full touch-pan-y overflow-visible"
+          role="img"
+          aria-label={`Revenue trend, ${r.delta} over ${range}`}
+          onPointerDown={onMove}
           onPointerMove={onMove}
           onPointerLeave={() => setHover(null)}
         >
@@ -98,7 +103,8 @@ export function StatCard({ className }: StatCardProps) {
           <motion.path
             className="text-foreground"
             fill={`url(#${gradientId})`}
-            animate={{ d: `${path} L ${W},${H} L 0,${H} Z` }}
+            initial={{ d: area }}
+            animate={{ d: area }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
           />
           <motion.path
@@ -106,7 +112,7 @@ export function StatCard({ className }: StatCardProps) {
             fill="none"
             strokeWidth="1.5"
             strokeLinecap="round"
-            initial={{ pathLength: 0 }}
+            initial={{ d: path, pathLength: 0 }}
             animate={{ d: path, pathLength: 1 }}
             transition={{ type: "spring", stiffness: 120, damping: 20, pathLength: { duration: 1.2, ease: "easeOut" } }}
           />
@@ -138,6 +144,8 @@ export function StatCard({ className }: StatCardProps) {
           {(Object.keys(ranges) as Range[]).map((k) => (
             <button
               key={k}
+              type="button"
+              aria-pressed={range === k}
               onClick={() => setRange(k)}
               className={cn(
                 "relative h-6 rounded-md px-2 font-mono text-[10px] transition-colors",
@@ -146,7 +154,7 @@ export function StatCard({ className }: StatCardProps) {
             >
               {range === k && (
                 <motion.span
-                  layoutId="stat-range"
+                  layoutId={`${uid}-range`}
                   className="absolute inset-0 rounded-md bg-surface shadow-btn"
                   transition={{ type: "spring", stiffness: 500, damping: 35 }}
                 />

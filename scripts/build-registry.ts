@@ -110,7 +110,26 @@ async function buildRegistry() {
     );
   }
 
-  // 3. Index
+  // 3. Standalone items that aren't listed on the components page
+  const extras = [
+    { name: "thock-icons", src: "src/components/icons/thock-icons.tsx", target: "components/icons/thock-icons.tsx" },
+    { name: "bubbly-icons", src: "src/components/icons/bubbly-icons.tsx", target: "components/icons/bubbly-icons.tsx" },
+  ];
+
+  for (const extra of extras) {
+    const content = fs.readFileSync(path.join(process.cwd(), extra.src), "utf-8");
+    const item: RegistryItem = {
+      $schema: SCHEMA_URL,
+      name: extra.name,
+      type: "registry:ui",
+      dependencies: detectDependencies(content),
+      registryDependencies: detectRegistryDeps(content),
+      files: [{ path: extra.target.replace(/^components\//, ""), content, type: "registry:ui", target: extra.target }],
+    };
+    fs.writeFileSync(path.join(REGISTRY_PATH, `${extra.name}.json`), JSON.stringify(item, null, 2));
+  }
+
+  // 4. Index
   const index = componentsRegistry.map((c) => ({
     name: c.slug,
     type: "registry:ui" as const,
@@ -124,7 +143,7 @@ async function buildRegistry() {
     JSON.stringify(index, null, 2)
   );
 
-  console.log(`Registry built: ${componentsRegistry.length} components + ${libs.length} libs → public/r/`);
+  console.log(`Registry built: ${componentsRegistry.length} components + ${extras.length} extras + ${libs.length} libs → public/r/`);
 }
 
 buildRegistry().catch(console.error);

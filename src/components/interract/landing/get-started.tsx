@@ -3,28 +3,25 @@
 import * as React from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowRight, Check, Copy } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Eyebrow, Section } from "@/components/interract/frame";
+import { CopyButton } from "@/components/interract/copy-button";
+import { REGISTRY_URL } from "@/lib/registry";
+
+const item = `${REGISTRY_URL}/command-menu.json`;
 
 const tabs = {
-  pnpm: ["pnpm dlx shadcn@latest init", "pnpm dlx shadcn@latest add https://interract.dev/r/command-menu.json"],
-  npm: ["npx shadcn@latest init", "npx shadcn@latest add https://interract.dev/r/command-menu.json"],
-  bun: ["bunx --bun shadcn@latest init", "bunx --bun shadcn@latest add https://interract.dev/r/command-menu.json"],
+  pnpm: ["pnpm dlx shadcn@latest init", `pnpm dlx shadcn@latest add ${item}`],
+  npm: ["npx shadcn@latest init", `npx shadcn@latest add ${item}`],
+  bun: ["bunx --bun shadcn@latest init", `bunx --bun shadcn@latest add ${item}`],
 } as const;
 
 type Tab = keyof typeof tabs;
 
 export function GetStartedSection() {
   const [tab, setTab] = React.useState<Tab>("npm");
-  const [copied, setCopied] = React.useState<number | null>(null);
-
-  const copy = (text: string, i: number) => {
-    navigator.clipboard.writeText(text);
-    setCopied(i);
-    setTimeout(() => setCopied(null), 1600);
-  };
 
   return (
     <Section>
@@ -49,10 +46,13 @@ export function GetStartedSection() {
 
         <div className="overflow-hidden rounded-2xl bg-surface shadow-raised">
           <div className="flex items-center justify-between border-b border-line px-3 py-2">
-            <div className="flex gap-0.5">
+            <div className="flex gap-0.5" role="tablist" aria-label="Package manager">
               {(Object.keys(tabs) as Tab[]).map((t) => (
                 <button
                   key={t}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === t}
                   onClick={() => setTab(t)}
                   className={cn(
                     "relative h-7 rounded-md px-2.5 font-mono text-xs transition-colors",
@@ -70,7 +70,7 @@ export function GetStartedSection() {
                 </button>
               ))}
             </div>
-            <span className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+            <span className="font-mono text-[10px] text-muted-foreground">
               Terminal
             </span>
           </div>
@@ -91,19 +91,17 @@ export function GetStartedSection() {
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     exit={{ opacity: 0, y: -4, filter: "blur(3px)" }}
                     transition={{ duration: 0.18 }}
-                    className="min-w-0 flex-1 truncate font-mono text-[13px] text-foreground"
+                    className="no-scrollbar min-w-0 flex-1 overflow-x-auto font-mono text-[13px] whitespace-nowrap text-foreground"
                   >
                     <span className="text-muted-foreground select-none">$ </span>
                     {cmd}
                   </motion.code>
                 </AnimatePresence>
-                <button
-                  onClick={() => copy(cmd, i)}
-                  aria-label="Copy command"
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-all group-hover:opacity-100 hover:bg-surface hover:text-foreground hover:shadow-btn focus-visible:opacity-100"
-                >
-                  {copied === i ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
-                </button>
+                <CopyButton
+                  text={cmd}
+                  label="Copy command"
+                  className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
+                />
               </div>
             ))}
           </div>

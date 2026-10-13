@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/interract/header";
 import { Section } from "@/components/interract/frame";
+import { siteConfig } from "@/lib/site";
 
 const footerLinks = [
   {
@@ -16,7 +17,7 @@ const footerLinks = [
     links: [
       { name: "Getting started", href: "/docs" },
       { name: "About", href: "/about" },
-      { name: "GitHub", href: "https://github.com/interract" },
+      { name: "GitHub", href: siteConfig.github },
     ],
   },
 ];
@@ -39,18 +40,29 @@ export function Footer() {
           <div className="flex gap-16">
             {footerLinks.map((col) => (
               <div key={col.title}>
-                <h3 className="font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
+                <h3 className="font-mono text-[12px] text-muted-foreground">
                   {col.title}
                 </h3>
                 <ul className="mt-4 space-y-2.5">
                   {col.links.map((link) => (
                     <li key={link.name}>
-                      <Link
-                        href={link.href}
-                        className="text-[13px] text-neutral-600 transition-colors hover:text-foreground dark:text-neutral-400"
-                      >
-                        {link.name}
-                      </Link>
+                      {link.href.startsWith("http") ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[13px] text-neutral-600 transition-colors hover:text-foreground dark:text-neutral-400"
+                        >
+                          {link.name}
+                        </a>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="text-[13px] text-neutral-600 transition-colors hover:text-foreground dark:text-neutral-400"
+                        >
+                          {link.name}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -63,13 +75,12 @@ export function Footer() {
           <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} Interract · MIT License
           </p>
-          <span className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            </span>
-            All systems normal
-          </span>
+          <a
+            href="#main"
+            className="font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Back to top ↑
+          </a>
         </div>
       </footer>
       <div className="font-pixel pointer-events-none overflow-hidden px-4 text-center text-[14vw] leading-[0.8] text-black/[0.035] select-none xl:text-[160px] dark:text-white/[0.035]" aria-hidden>
